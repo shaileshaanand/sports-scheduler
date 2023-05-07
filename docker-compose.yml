@@ -1,0 +1,31 @@
+version: '3'
+services:
+  app:
+    build: 
+      dockerfile: Dockerfile
+      context: .
+    command: npm run dev
+    volumes:
+      - ./:/home/node/app
+      - /home/node/app/node_modules
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_URL=postgresql://postgres:changeme123@db:5432/news_db
+      - NODE_ENV=development
+      - SESSION_SECRET=lkaflkdrwsgjnrfdkgnfjknbdfgvjkjnb
+    depends_on:
+      - db
+      
+  db:
+    image: postgres:alpine
+    volumes:
+      - data:/var/lib/postgresql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=news_db
+      - POSTGRES_PASSWORD=changeme123
+    
+
+volumes:
+  data:
