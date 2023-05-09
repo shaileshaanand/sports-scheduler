@@ -27,24 +27,26 @@ model SportSession {
   endsAt             DateTime
   cancelled          Boolean  @default(false)
   cancellationReason String?
-  sport              Sport    @relation(fields: [sportId], references: [id])
+  sport              Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
   sportId            Int
-  owner              User     @relation(fields: [ownerId], references: [id])
+  owner              User     @relation("SportSessionOwner", fields: [ownerId], references: [id])
   ownerId            Int
+  participants       User[]   @relation("SportSessionParticipants")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }
 
 model User {
-  id        Int            @id @default(autoincrement())
-  email     String         @unique
-  firstName String
-  lastName  String?
-  password  String
-  role      Role           @default(USER)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  sessions  SportSession[]
+  id              Int            @id @default(autoincrement())
+  email           String         @unique
+  firstName       String
+  lastName        String?
+  password        String
+  role            Role           @default(USER)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  createdSessions SportSession[] @relation("SportSessionOwner")
+  joinedSessions  SportSession[] @relation("SportSessionParticipants")
 }
 
 enum Role {
