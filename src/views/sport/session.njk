@@ -1,0 +1,31 @@
+{% extends "layout.njk" %}
+{% block content %}
+  <h3>{{session.name}}
+    at
+    {{session.venue}}</h3>
+  {%if user.id===session.ownerId%}
+    <form action="/sport/{{sport.id}}/session/{{session.id}}/cancel" method="post">
+      <div>
+        <label for="cancellationReason">Reason</label>
+        <input type="text" id="cancellationReason" name="cancellationReason">
+      </div>
+      <input type="submit" value="Cancel">
+    </form>
+  {% endif %}
+  <p>Participants</p>
+  <ul>
+    {% for participant in session.participants %}
+      <li>{{participant.firstName}}</li>
+    {% endfor %}
+  </ul>
+  {% if not joined%}
+    <form action="/sport/{{sport.id}}/session/{{session.id}}/join" method="post">
+      <input type="submit" value="Join">
+    </form>
+  {% else %}
+    <form action="/sport/{{sport.id}}/session/{{session.id}}/leave" method="post">
+      <input type="submit" value="Leave">
+    </form>
+  {% endif %}
+
+{% endblock %}

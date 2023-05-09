@@ -8,8 +8,38 @@
   </head>
   <body>
     <h1>
-      Sports Scheduler
+      <a href="/">Sports Scheduler</a>
     </h1>
+    <form action="/user/logout" method="post">
+      <input type="submit" value="Logout">
+    </form>
+    <ul>
+      {% if messages and messages.error and messages.error.length > 0 %}
+        {% for message in messages.error %}
+          <li>
+            {{ message }}
+          </li>
+        {% endfor %}
+      {% endif %}
+    </ul>
+    <ul>
+      {% if messages and messages.success and messages.success.length > 0 %}
+        {% for message in messages.success %}
+          <li>
+            {{ message }}
+          </li>
+        {% endfor %}
+      {% endif %}
+    </ul>
+    <ul>
+      {% if messages and messages.info and messages.info.length > 0 %}
+        {% for message in messages.info %}
+          <li>
+            {{ message }}
+          </li>
+        {% endfor %}
+      {% endif %}
+    </ul>
     {% block content %}{% endblock %}
   </body>
 </html>

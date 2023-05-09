@@ -1,0 +1,12 @@
+<div>
+  <h3>Available Sports</h3>
+  <ul>
+    {% for sport in sports %}
+      <li>
+        <a href="/sport/{{ sport.id }}">
+          {{ sport.name }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

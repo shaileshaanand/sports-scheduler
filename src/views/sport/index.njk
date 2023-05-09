@@ -1,0 +1,47 @@
+{% extends "layout.njk" %}
+{% block content %}
+  <h3>{{ sport.name }}</h3>
+  {% if user.role === "ADMIN" %}
+    <form action="/sport/{{ sport.id }}?_method=DELETE" method="post">
+      <input type="submit" value="Delete">
+    </form>
+    <h4>Edit</h4>
+    <form action="/sport/{{ sport.id }}?_method=PUT" method="post">
+      <label for="name">Name</label>
+      <input type="text" name="name" value="{{ sport.name }}" id="name">
+      <input type="submit" value="Save">
+    </form>
+  {% endif %}
+  <h4>Sesions</h4>
+  <form action="/sport/{{ sport.id }}/session" method="post">
+    <div>
+      <label for="session-name">Name</label>
+      <input type="text" name="name" id="session-name">
+    </div>
+    <div>
+      <label for="venue">Venue</label>
+      <input type="text" name="venue" id="venue">
+    </div>
+    <div>
+      <label for="totalSlots">Number of slots</label>
+      <input type="number" id="totalSlots" name="totalSlots">
+    </div>
+    <div>
+      <label for="startsAt">Sessions starts at</label>
+      <input type="datetime-local" id="startsAt" name="startsAt">
+    </div>
+    <div>
+      <label for="endsAt">Session ends at</label>
+      <input type="datetime-local" id="endsAt" name="endsAt">
+    </div>
+    <input type="submit" value="Add">
+  </form>
+  <h3>Upcoming Sessions</h3>
+  <ul>
+    {% for session in sport.sessions %}
+      <li>
+        <a href="/sport/{{ sport.id }}/session/{{ session.id }}">{{ session.name }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
