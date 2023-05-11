@@ -6,12 +6,15 @@ import bodyParser from "body-parser";
 import bunyan from "bunyan";
 import { ensureLoggedIn } from "connect-ensure-login";
 import flash from "connect-flash";
+import RedisStore from "connect-redis";
 import express from "express";
 import session from "express-session";
 import methodOverride from "method-override";
 import nunjucks from "nunjucks";
 import passport from "passport";
 import LocalStrategy from "passport-local";
+import { createClient } from "redis";
+
 import "express-async-errors";
 
 import adminRouter from "./controllers/admin.js";
@@ -21,11 +24,14 @@ import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 const prisma = new PrismaClient();
+const redisClient = createClient({ url: process.env.REDIS_URL });
 
 export const log = bunyan.createLogger({
   name: "sports-tracker",
   serializers: bunyan.stdSerializers,
 });
+
+redisClient.connect().catch((msg) => log.error(msg));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
@@ -36,6 +42,10 @@ app.use(
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
     },
+    store: new RedisStore({
+      client: redisClient,
+      prefix: "session:",
+    }),
   })
 );
 app.use(passport.initialize());

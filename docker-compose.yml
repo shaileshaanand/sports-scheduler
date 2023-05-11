@@ -12,6 +12,7 @@ services:
       - 3000:3000
     environment:
       - DATABASE_URL=postgresql://postgres:changeme123@db:5432/news_db
+      - REDIS_URL=redis://redis:6379
       - NODE_ENV=development
       - SESSION_SECRET=lkaflkdrwsgjnrfdkgnfjknbdfgvjkjnb
     depends_on:
@@ -25,6 +26,10 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=news_db
       - POSTGRES_PASSWORD=changeme123
+  
+  redis:
+    image: redis:alpine
+    
     
 
 volumes:
