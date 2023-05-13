@@ -52,7 +52,7 @@ userRouter.get("/login", async (req, res) => {
   res.render("login.njk");
 });
 
-userRouter.post("/logout", async (req, res) => {
+userRouter.get("/logout", async (req, res) => {
   req.logout((err) => {
     if (err) {
       throw err;

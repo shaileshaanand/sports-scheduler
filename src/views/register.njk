@@ -1,23 +1,20 @@
-{% extends "layout.njk" %}
-{% block content %}
-  <form action="/user" method="post">
-    <div>
-      <label for="firstName">First Name</label>
-      <input type="text" name="firstName" id="firstName" required="required">
-    </div>
-    <div>
-      <label for="lastName">Last Name</label>
-      <input type="text" name="lastName" id="lastName">
-    </div>
-    <div>
-      <label for="email">Email</label>
-      <input type="email" name="email" id="email" required="required">
-    </div>
-    <div>
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password" required="required">
-    </div>
-    <input type="submit" value="Register">
-  </form>
-  <a href="/user/login">Login</a>
-{% endblock %}
+<form action="/user" method="post">
+  <div>
+    <label for="firstName">First Name</label>
+    <input type="text" name="firstName" id="firstName" required="required">
+  </div>
+  <div>
+    <label for="lastName">Last Name</label>
+    <input type="text" name="lastName" id="lastName">
+  </div>
+  <div>
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" required="required">
+  </div>
+  <div>
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" required="required">
+  </div>
+  <input type="submit" value="Register">
+</form>
+<a href="/user/login">Login</a>

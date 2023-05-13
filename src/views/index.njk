@@ -1,9 +1,60 @@
 {% extends "layout.njk" %}
 {% block content %}
-  <h2>
-    Hi
-    {{user.firstName}}
-  </h2>
-  {% include "snippets/sports.njk" %}
+  <div class="row">
+    {% if user.role === "ADMIN" %}
+      <div class="col-12 mb-3">
+        <div class="text-end">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSportModal">
+            <i class="bi bi-plus-lg"></i>
+            Add Sport
+          </button>
+        </div>
+        <div class="modal fade" id="addSportModal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                Create Sport
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form action="/sport" method="post">
+                <div class="modal-body mb-2">
+                  <div>
+                    <label for="name" class="form-label">Sport Name</label>
+                    <input type="text" name="name" id="name" class="form-control">
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Add Sport</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
 
+    {% endif %}
+    {% for sport in sports %}
+      <div class="col-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">
+              <h3>
+                {{sport.name}}
+              </h3>
+            </div>
+            <div class="card-subtitle">
+              <small>
+                {{sport.upcomingSessions}}
+                Upcoming Sessions
+              </small>
+            </div>
+            <div class="text-end">
+              <a href="/sport/{{sport.id}}" class="btn btn-primary">Explore</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 {% endblock %}

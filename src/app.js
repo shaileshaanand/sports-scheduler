@@ -18,6 +18,7 @@ import { createClient } from "redis";
 import "express-async-errors";
 
 import adminRouter from "./controllers/admin.js";
+import apiRouter from "./controllers/api.js";
 import sportRouter from "./controllers/sport.js";
 import userRouter from "./controllers/user.js";
 import errorHandler from "./middlewares/errorHandler.js";
@@ -108,7 +109,16 @@ nunjucks.configure("src/views", {
 
 app.get("/", async (req, res) => {
   if (req.user) {
-    const sports = await prisma.sport.findMany();
+    const sports = await prisma.sport.findMany({
+      include: {
+        sessions: true,
+      },
+    });
+    sports.map((sport) => {
+      sport.upcomingSessions = sport.sessions.filter(
+        (session) => session.startsAt > new Date()
+      ).length;
+    });
     return res.render("index.njk", { user: req.user, sports });
   }
   return res.render("home.njk");
@@ -117,6 +127,7 @@ app.get("/", async (req, res) => {
 app.use("/user", userRouter);
 app.use("/admin", ensureLoggedIn("/user/login"), adminRouter);
 app.use("/sport", ensureLoggedIn("/user/login"), sportRouter);
+app.use("/api", ensureLoggedIn("/user/login"), apiRouter);
 
 app.use(errorHandler);
 export default app;

@@ -1,15 +1,12 @@
-{% extends "layout.njk" %}
-{% block content %}
-  <form action="/user/session" method="post">
-    <div>
-      <label for="email">Email</label>
-      <input type="email" name="email" id="email">
-    </div>
-    <div>
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password">
-    </div>
-    <input type="submit" value="Login">
-  </form>
-  <a href="/user/register">Register</a>
-{% endblock %}
+<form action="/user/session" method="post">
+  <div>
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email">
+  </div>
+  <div>
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password">
+  </div>
+  <input type="submit" value="Login">
+</form>
+<a href="/user/register">Register</a>

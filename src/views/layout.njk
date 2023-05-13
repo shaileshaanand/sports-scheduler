@@ -5,41 +5,61 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sports Scheduler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   </head>
   <body>
-    <h1>
-      <a href="/">Sports Scheduler</a>
-    </h1>
-    <form action="/user/logout" method="post">
-      <input type="submit" value="Logout">
-    </form>
-    <ul>
-      {% if messages and messages.error and messages.error.length > 0 %}
-        {% for message in messages.error %}
-          <li>
-            {{ message }}
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Sports Scheduler</a>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/sports">Teams</a>
           </li>
-        {% endfor %}
-      {% endif %}
-    </ul>
-    <ul>
-      {% if messages and messages.success and messages.success.length > 0 %}
-        {% for message in messages.success %}
-          <li>
-            {{ message }}
+          <li class="nav-item">
+            <a class="nav-link" href="/sessions">Games</a>
           </li>
-        {% endfor %}
-      {% endif %}
-    </ul>
-    <ul>
-      {% if messages and messages.info and messages.info.length > 0 %}
-        {% for message in messages.info %}
-          <li>
-            {{ message }}
-          </li>
-        {% endfor %}
-      {% endif %}
-    </ul>
-    {% block content %}{% endblock %}
+        </ul>
+        <div class="">
+          <span class="navbar-text">
+            Hi,
+            {{user.firstName}}
+          </span>
+          <a class="btn btn-outline-danger ms-2" href="/user/logout">Logout</a>
+        </div>
+      </div>
+    </nav>
+    <div class="container p-5">
+      <div>
+        {% if messages and messages.error and messages.error.length > 0 %}
+          {% for message in messages.error %}
+            <div class="alert alert-danger">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div>
+        {% if messages and messages.success and messages.success.length > 0 %}
+          {% for message in messages.success %}
+            <div class="alert alert-success">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div>
+        {% if messages and messages.info and messages.info.length > 0 %}
+          {% for message in messages.info %}
+            <div class="alert alert-secondary">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% block content %}{% endblock %}
+    </div>
   </body>
 </html>
