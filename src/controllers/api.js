@@ -31,7 +31,7 @@ apiRouter.get("/user", async (req, res) => {
       ],
     },
   });
-  res.json(users);
+  res.json(users.filter((user) => user.id !== req.user.id));
 });
 
 export default apiRouter;
