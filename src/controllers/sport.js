@@ -21,6 +21,9 @@ sportRouter.get("/:id", async (req, res) => {
         },
         where: {
           cancelled: false,
+          startsAt: {
+            gt: new Date(),
+          },
         },
         orderBy: {
           startsAt: "asc",

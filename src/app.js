@@ -140,13 +140,15 @@ app.get("/", async (req, res) => {
   if (req.user) {
     const sports = await prisma.sport.findMany({
       include: {
-        sessions: true,
+        sessions: {
+          where: {
+            cancelled: false,
+            startsAt: {
+              gt: new Date(),
+            },
+          },
+        },
       },
-    });
-    sports.map((sport) => {
-      sport.upcomingSessions = sport.sessions.filter(
-        (session) => session.startsAt > new Date()
-      ).length;
     });
     return res.render("index.njk", { user: req.user, sports });
   }
