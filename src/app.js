@@ -7,6 +7,7 @@ import bunyan from "bunyan";
 import { ensureLoggedIn } from "connect-ensure-login";
 import flash from "connect-flash";
 import RedisStore from "connect-redis";
+import { format, formatDistanceStrict, formatDistanceToNow } from "date-fns";
 import express from "express";
 import session from "express-session";
 import methodOverride from "method-override";
@@ -102,9 +103,33 @@ passport.deserializeUser(async (id, done) => {
   done(null, user);
 });
 
-nunjucks.configure("src/views", {
+const env = nunjucks.configure("src/views", {
   autoescape: true,
   express: app,
+});
+
+env.addGlobal("formatToDate", (date) => {
+  return format(date, "do MMM yyyy");
+});
+
+env.addGlobal("formatToTime", (date) => {
+  return format(date, "h:mm a");
+});
+
+env.addGlobal("formatDistance", (start, end) => {
+  return formatDistanceStrict(start, end);
+});
+
+env.addGlobal("formatDistanceFromNow", (start) => {
+  return formatDistanceToNow(start, { addSuffix: true });
+});
+
+env.addFilter("upcoming", (sessions) => {
+  return sessions.filter((session) => session.startsAt > new Date());
+});
+
+env.addFilter("past", (sessions) => {
+  return sessions.filter((session) => session.startsAt < new Date());
 });
 
 app.get("/", async (req, res) => {

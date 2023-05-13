@@ -15,8 +15,23 @@ sportRouter.get("/:id", async (req, res) => {
   const sport = await prisma.sport.findUnique({
     where: { id },
     include: {
-      sessions: true,
+      sessions: {
+        include: {
+          participants: true,
+        },
+        where: {
+          cancelled: false,
+        },
+        orderBy: {
+          startsAt: "asc",
+        },
+      },
     },
+  });
+  sport.sessions.map((session) => {
+    session.participating = session.participants.some(
+      (participant) => participant.id === req.user.id
+    );
   });
   res.render("sport/index.njk", { sport, user: req.user });
 });
@@ -147,7 +162,7 @@ sportRouter.post("/:id/session/:sessionId/join", async (req, res) => {
       },
     },
   });
-  res.redirect(`/sport/${req.params.id}/session/${id}`);
+  res.redirect("back");
 });
 
 sportRouter.post("/:id/session/:sessionId/leave", async (req, res) => {
@@ -178,7 +193,7 @@ sportRouter.post("/:id/session/:sessionId/leave", async (req, res) => {
       },
     },
   });
-  res.redirect(`/sport/${req.params.id}/session/${id}`);
+  res.redirect("back");
 });
 
 sportRouter.post("/:id/session/:sessionId/cancel", async (req, res) => {
@@ -208,7 +223,7 @@ sportRouter.post("/:id/session/:sessionId/cancel", async (req, res) => {
       cancellationReason,
     },
   });
-  res.redirect(`/sport/${req.params.id}/session/${id}`);
+  res.redirect(`/sport/${req.params.id}/`);
 });
 
 export default sportRouter;
