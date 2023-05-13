@@ -1,31 +1,93 @@
 {% extends "layout.njk" %}
 {% block content %}
-  <h3>{{session.name}}
-    at
-    {{session.venue}}</h3>
-  {%if user.id===session.ownerId%}
-    <form action="/sport/{{sport.id}}/session/{{session.id}}/cancel" method="post">
+  <div class="d-flex justify-content-between mb-3">
+    <div>
+      <h3>
+        {{session.name}}
+      </h3>
+      <h5 class="text-muted">
+        <i class="bi bi-geo-alt"></i>
+        {{session.venue}}
+      </h5>
+    </div>
+    {%if user.id===session.ownerId%}
       <div>
-        <label for="cancellationReason">Reason</label>
-        <input type="text" id="cancellationReason" name="cancellationReason">
+        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelSessionModal">
+          <i class="bi bi-x-circle-fill me-2"></i>Cancel</button>
       </div>
-      <input type="submit" value="Cancel">
-    </form>
+    {% endif %}
+  </div>
+  {%if user.id===session.ownerId%}
+    <div class="modal fade" id="cancelSessionModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5>Cancel Session</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <form action="/sport/{{sport.id}}/session/{{session.id}}/cancel" method="post">
+            <div class="modal-body">
+              <div>
+                <label for="cancellationReason" class="form-label">Reason</label>
+                <input type="text" id="cancellationReason" name="cancellationReason" class="form-control">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" value="Cancel" class="btn btn-danger">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   {% endif %}
-  <p>Participants</p>
-  <ul>
+  <div class="d-flex justify-content-between mb-3">
+    <p class="h5">
+      <i class="bi bi-calendar-date me-1"></i>
+      {{formatToDate(session.startsAt)}}
+    </p>
+    <p class="h5">
+      <i class="bi bi-clock me-1"></i>
+      {{formatToTime(session.startsAt)}},
+      {{formatDistance(session.startsAt,session.endsAt)}}
+    </p>
+  </div>
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <p class="h5">Participants</p>
+      <p class="text-muted">
+        <i class="bi bi-person me-1"></i>
+        {{session.totalSlots-session.participants.length}}
+        {{pluralizeIfmultiple("slot",session.totalSlots-session.participants.length)}}
+        free (Total
+        {{session.totalSlots}}
+        {{pluralizeIfmultiple("slot",session.totalSlots)}})
+      </p>
+    </div>
+    {% if not joined%}
+      <form action="/sport/{{sport.id}}/session/{{session.id}}/join" method="post">
+        <button type="submit" class="btn btn-success">Join</button>
+      </form>
+    {% else %}
+      <form action="/sport/{{sport.id}}/session/{{session.id}}/leave" method="post">
+        <button type="submit" class="btn btn-danger">Leave</button>
+      </form>
+    {% endif %}
+  </div>
+  <div class="row mt-2 mb-3">
     {% for participant in session.participants %}
-      <li>{{participant.firstName}}</li>
+      <div class="col-3">
+        <div class="card">
+          <div class="card-body">
+            {% if participant.id===user.id%}
+              Me
+            {% else %}
+              {{participant.firstName}}
+              {{participant.lastName}}
+              ({{participant.email}})
+            {% endif %}
+          </div>
+        </div>
+      </div>
     {% endfor %}
-  </ul>
-  {% if not joined%}
-    <form action="/sport/{{sport.id}}/session/{{session.id}}/join" method="post">
-      <input type="submit" value="Join">
-    </form>
-  {% else %}
-    <form action="/sport/{{sport.id}}/session/{{session.id}}/leave" method="post">
-      <input type="submit" value="Leave">
-    </form>
-  {% endif %}
-
+  </div>
 {% endblock %}

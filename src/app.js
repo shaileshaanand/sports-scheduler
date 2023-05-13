@@ -124,6 +124,10 @@ env.addGlobal("formatDistanceFromNow", (start) => {
   return formatDistanceToNow(start, { addSuffix: true });
 });
 
+env.addGlobal("pluralizeIfmultiple", (word, count) => {
+  return count === 1 ? word : `${word}s`;
+});
+
 env.addFilter("upcoming", (sessions) => {
   return sessions.filter((session) => session.startsAt > new Date());
 });
