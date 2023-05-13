@@ -2,8 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import { z } from "zod";
 
-import { log } from "../app.js";
-
 const sportRouter = Router();
 
 const prisma = new PrismaClient();
@@ -20,14 +18,13 @@ sportRouter.get("/:id", async (req, res) => {
       sessions: true,
     },
   });
-  log.info({ sport });
   res.render("sport/index.njk", { sport, user: req.user });
 });
 
 sportRouter.post("/", async (req, res) => {
   const data = sportParser.parse(req.body);
   await prisma.sport.create({ data });
-  res.redirect("/admin");
+  res.redirect("/");
 });
 
 sportRouter.put("/:id", async (req, res) => {
@@ -45,7 +42,7 @@ sportRouter.delete("/:id", async (req, res) => {
   await prisma.sport.delete({
     where: { id },
   });
-  res.redirect("/admin");
+  res.redirect("/");
 });
 
 sportRouter.post("/:id/session", async (req, res) => {
@@ -63,6 +60,7 @@ sportRouter.post("/:id/session", async (req, res) => {
         .string()
         .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
         .transform((x) => new Date(x)),
+      participants: z.string().min(2),
     })
     .refine((x) => x.startsAt < x.endsAt, {
       message: "Starts at must be before ends at",
@@ -73,6 +71,12 @@ sportRouter.post("/:id/session", async (req, res) => {
       path: ["startsAt"],
     })
     .parse(req.body);
+
+  const userIds = JSON.parse(data.participants);
+
+  if (userIds.length > data.totalSlots) {
+    throw new Error("Too many participants");
+  }
 
   await prisma.sportSession.create({
     data: {
@@ -85,7 +89,7 @@ sportRouter.post("/:id/session", async (req, res) => {
         connect: { id: req.user.id },
       },
       participants: {
-        connect: { id: req.user.id },
+        connect: userIds.map((id) => ({ id })),
       },
     },
   });
@@ -105,7 +109,6 @@ sportRouter.get("/:id/session/:sessionId", async (req, res) => {
       where: { id: Number(req.params.id) },
     }),
   ]);
-  req.log.info({ session, sport });
   const joined = session.participants.some((x) => x.id === req.user.id);
   res.render("sport/session.njk", { session, sport, user: req.user, joined });
 });
@@ -129,6 +132,11 @@ sportRouter.post("/:id/session/:sessionId/join", async (req, res) => {
   }
   if (session.startsAt < new Date()) {
     throw new Error("Session has already started");
+  }
+  if (session.cancelled) {
+    throw new Error(
+      `Session has been cancelled due to ${session.cancellationReason}`
+    );
   }
 
   await prisma.sportSession.update({
@@ -159,6 +167,9 @@ sportRouter.post("/:id/session/:sessionId/leave", async (req, res) => {
   if (session.startsAt < new Date()) {
     throw new Error("Session has already started");
   }
+  if (session.cancelled) {
+    throw new Error("Session has been cancelled");
+  }
   await prisma.sportSession.update({
     where: { id },
     data: {
@@ -172,7 +183,7 @@ sportRouter.post("/:id/session/:sessionId/leave", async (req, res) => {
 
 sportRouter.post("/:id/session/:sessionId/cancel", async (req, res) => {
   const id = Number(req.params.sessionId);
-  const session = await prisma.sportSession.findUnique({
+  const session = await prisma.sportSession.findFirstOrThrow({
     where: { id, ownerId: req.user.id },
   });
   if (!session) {
@@ -184,7 +195,12 @@ sportRouter.post("/:id/session/:sessionId/cancel", async (req, res) => {
   if (session.startsAt < new Date()) {
     throw new Error("Session has already started");
   }
-  const cancellationReason = z.string().min(1).max(255).parse(req.body.reason);
+  const cancellationReason = z
+    .string()
+    .min(1)
+    .max(255)
+    .parse(req.body.cancellationReason);
+
   await prisma.sportSession.update({
     where: { id },
     data: {
