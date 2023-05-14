@@ -1,0 +1,26 @@
+{% extends "layout.njk" %}
+
+{% import "macros/session.njk" as sessionMacros %}
+{% block content %}
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="hosted-tab" data-bs-toggle="tab" data-bs-target="#hosted-tab-pane" role="tab" aria-controls="hosted-tab-pane" aria-selected="true" type="button">Hosted</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="joined-tab" data-bs-toggle="tab" data-bs-target="#joined-tab-pane" role="tab" aria-controls="joined-tab-pane" aria-selected="false" type="button">Joined</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="hosted-tab-pane" role="tabpanel" aria-labelledby="hosted-tab" tabindex="0">
+      {{ sessionMacros.sessionCardList("Upcoming", hostedSessions | upcoming) }}
+      {{ sessionMacros.sessionCardList("Past", hostedSessions | past) }}
+      {{ sessionMacros.sessionCardList("Cancelled", hostedSessions | cancelled) }}
+    </div>
+    <div class="tab-pane fade" id="joined-tab-pane" role="tabpanel" aria-labelledby="joined-tab" tabindex="0">
+      {{ sessionMacros.sessionCardList("Upcoming", participatingSessions | upcoming) }}
+      {{ sessionMacros.sessionCardList("Past", participatingSessions | past) }}
+      {{ sessionMacros.sessionCardList("Cancelled", participatingSessions | cancelled) }}
+    </div>
+  </div>
+
+{% endblock %}

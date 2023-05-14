@@ -3,16 +3,17 @@
   <div class="d-flex justify-content-between mb-3">
     <div>
       <h3>
-        {{session.name}}
+        {{ session.name }}
       </h3>
       <h5 class="text-muted">
         <i class="bi bi-geo-alt"></i>
         {{session.venue}}
       </h5>
     </div>
-    {%if user.id===session.ownerId%}
+    {% if user.id === session.ownerId %}
+      {% if isPast(session.startsAt) %}{% endif %}
       <div>
-        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelSessionModal">
+        <button class="btn btn-outline-danger" data-bs-toggle="modal" {% if isPast(session.startsAt) or session.cancelled %} disabled="disabled" {% endif %} data-bs-target="#cancelSessionModal">
           <i class="bi bi-x-circle-fill me-2"></i>Cancel</button>
       </div>
     {% endif %}
@@ -58,21 +59,30 @@
         <i class="bi bi-person me-1"></i>
         {{session.totalSlots-session.participants.length}}
         {{pluralizeIfmultiple("slot",session.totalSlots-session.participants.length)}}
-        free (Total
+        left (Total
         {{session.totalSlots}}
         {{pluralizeIfmultiple("slot",session.totalSlots)}})
       </p>
+      5 slots left
+
     </div>
     {% if not joined%}
       <form action="/sport/{{sport.id}}/session/{{session.id}}/join" method="post">
-        <button type="submit" class="btn btn-success">Join</button>
+        <button type="submit" class="btn btn-success" {% if isPast(session.startsAt) or session.cancelled %} disabled="disabled" {% endif %}>Join</button>
       </form>
     {% else %}
       <form action="/sport/{{sport.id}}/session/{{session.id}}/leave" method="post">
-        <button type="submit" class="btn btn-danger">Leave</button>
+        <button type="submit" class="btn btn-danger" {% if isPast(session.startsAt) or session.cancelled %} disabled="disabled" {% endif %}>Leave</button>
       </form>
     {% endif %}
   </div>
+  {% if session.cancelled %}
+    <div class="alert alert-warning">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      This session was cancelled due to
+      {{session.cancellationReason}}
+    </div>
+  {% endif %}
   <div class="row mt-2 mb-3">
     {% for participant in session.participants %}
       <div class="col-3">
@@ -90,4 +100,5 @@
       </div>
     {% endfor %}
   </div>
+
 {% endblock %}

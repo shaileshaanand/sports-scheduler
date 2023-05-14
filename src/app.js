@@ -128,12 +128,28 @@ env.addGlobal("pluralizeIfmultiple", (word, count) => {
   return count === 1 ? word : `${word}s`;
 });
 
+env.addGlobal("isPast", (date) => {
+  return date < new Date();
+});
+
+env.addGlobal("isRunning", (start, end) => {
+  return start < new Date() && end > new Date();
+});
+
 env.addFilter("upcoming", (sessions) => {
-  return sessions.filter((session) => session.startsAt > new Date());
+  return sessions.filter(
+    (session) => session.startsAt > new Date() && !session.cancelled
+  );
 });
 
 env.addFilter("past", (sessions) => {
-  return sessions.filter((session) => session.startsAt < new Date());
+  return sessions.filter(
+    (session) => session.startsAt < new Date() && !session.cancelled
+  );
+});
+
+env.addFilter("cancelled", (sessions) => {
+  return sessions.filter((session) => session.cancelled);
 });
 
 app.get("/", async (req, res) => {

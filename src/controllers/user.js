@@ -61,4 +61,41 @@ userRouter.get("/logout", async (req, res) => {
   });
 });
 
+userRouter.get("/sessions", async (req, res) => {
+  const hostedSessions = await prisma.sportSession.findMany({
+    where: {
+      ownerId: req.user.id,
+    },
+    include: {
+      participants: true,
+    },
+  });
+  const participatingSessions = await prisma.sportSession.findMany({
+    where: {
+      participants: {
+        some: {
+          id: req.user.id,
+        },
+      },
+    },
+    include: {
+      participants: true,
+    },
+  });
+  hostedSessions.forEach((session) => {
+    session.participating = session.participants.some(
+      (participant) => participant.id === req.user.id
+    );
+  });
+  participatingSessions.forEach((session) => {
+    session.participating = session.participants.some(
+      (participant) => participant.id === req.user.id
+    );
+  });
+  res.render("user/sessions.njk", {
+    hostedSessions,
+    participatingSessions,
+  });
+});
+
 export default userRouter;
