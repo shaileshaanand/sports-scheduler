@@ -1,3 +1,10 @@
+{% macro navLink(href, text, pageId) %}
+  {% if pageId === currentPage %}
+    <a class="nav-link active" href={{href}}>{{text}}</a>
+  {% else %}
+    <a class="nav-link" href={{href}}>{{text}}</a>
+  {% endif %}
+{% endmacro %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,10 +23,10 @@
         <a class="navbar-brand" href="/">Sports Scheduler</a>
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="/user/sessions">My Sessions</a>
+            {{ navLink('/', 'Sports', 'sports') }}
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/sessions">Games</a>
+            {{ navLink('/user/sessions', 'My Sessions', 'mySessions') }}
           </li>
         </ul>
         <div class="">

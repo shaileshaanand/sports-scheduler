@@ -95,6 +95,8 @@ userRouter.get("/sessions", async (req, res) => {
   res.render("user/sessions.njk", {
     hostedSessions,
     participatingSessions,
+    currentPage: "mySessions",
+    user: req.user,
   });
 });
 

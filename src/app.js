@@ -166,7 +166,11 @@ app.get("/", async (req, res) => {
         },
       },
     });
-    return res.render("index.njk", { user: req.user, sports });
+    return res.render("index.njk", {
+      user: req.user,
+      sports,
+      currentPage: "sports",
+    });
   }
   return res.render("home.njk");
 });
