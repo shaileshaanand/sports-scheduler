@@ -11,19 +11,6 @@ COPY --chown=node:node package*.json .
 COPY --chown=node:node prisma ./prisma
 
 
-FROM base as production
-
-ENV NODE_ENV=production
-
-RUN npm ci --omit=dev && npx prisma generate
-
-COPY --chown=node:node . .
-
-CMD ["npm","run","prod"]
-
-EXPOSE 3000
-
-
 FROM base as development
 
 # Install python/pip for djlint
@@ -41,6 +28,14 @@ CMD ["npm","run","dev"]
 EXPOSE 3000
 
 
+FROM base as production
 
+ENV NODE_ENV=production
 
+RUN npm ci --omit=dev && npx prisma generate
 
+COPY --chown=node:node . .
+
+CMD ["npm","run","prod"]
+
+EXPOSE 3000
