@@ -1,14 +1,24 @@
 {% extends "layout.njk" %}
+
 {% block content %}
   <div class="d-flex justify-content-between">
     <h3>{{ sport.name }}</h3>
     <div class="d-flex align-items-center gap-2">
-      <button class="btn btn-large btn-primary" data-bs-toggle="modal" data-bs-target="#newSessionModal">Host a session</button>
+      <button class="btn btn-large btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#newSessionModal">
+        Host a session
+      </button>
       {% if user.role === "ADMIN" %}
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sportEditModal">
+        <button class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#sportEditModal">
           <i class="bi bi-pencil"></i>
         </button>
-        <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#sportDeleteModal">
+        <button type="submit"
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#sportDeleteModal">
           <i class="bi bi-trash"></i>
         </button>
       {% endif %}
@@ -25,11 +35,15 @@
           <form action="/sport/{{ sport.id }}?_method=PUT" method="post">
             <div class="modal-body">
               <label for="name" class="form-label">Name</label>
-              <input type="text" name="name" value="{{ sport.name }}" id="name" class="form-control">
+              <input type="text"
+                     name="name"
+                     value="{{ sport.name }}"
+                     id="name"
+                     class="form-control" />
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <input type="submit" value="Save" class="btn btn-primary">
+              <input type="submit" value="Save" class="btn btn-primary" />
             </div>
           </form>
         </div>
@@ -48,15 +62,13 @@
           <div class="modal-footer">
             <form action="/sport/{{ sport.id }}?_method=DELETE" method="post">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <input type="submit" value="Delete" class="btn btn-danger">
+              <input type="submit" value="Delete" class="btn btn-danger" />
             </form>
           </div>
         </div>
       </div>
     </div>
-
   {% endif %}
-
   <div class="modal fade" id="newSessionModal">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -64,34 +76,37 @@
           <h5>New Session</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <form action="/sport/{{ sport.id }}/session" method="post" id="newSessionForm">
+        <form action="/sport/{{ sport.id }}/session"
+              method="post"
+              id="newSessionForm">
           <div class="modal-body">
             <div class="mb-2">
               <label for="session-name" class="form-label">Name</label>
-              <input type="text" name="name" id="session-name" class="form-control">
+              <input type="text" name="name" id="session-name" class="form-control" />
             </div>
             <div class="mb-2">
               <label for="venue" class="form-label">Venue</label>
-              <input type="text" name="venue" id="venue" class="form-control">
+              <input type="text" name="venue" id="venue" class="form-control" />
             </div>
             <div class="mb-2">
               <label for="totalSlots" class="form-label">Number of slots</label>
-              <input type="number" id="totalSlots" name="totalSlots" class="form-control">
+              <input type="number" id="totalSlots" name="totalSlots" class="form-control" />
             </div>
             <div class="mb-2">
               <label for="startsAt" class="form-label">Sessions starts at</label>
-              <input type="datetime-local" id="startsAt" name="startsAt" class="form-control">
+              <input type="datetime-local"
+                     id="startsAt"
+                     name="startsAt"
+                     class="form-control" />
             </div>
             <div class="mb-2">
               <label for="endsAt" class="form-label">Session ends at</label>
-              <input type="datetime-local" id="endsAt" name="endsAt" class="form-control">
+              <input type="datetime-local" id="endsAt" name="endsAt" class="form-control" />
             </div>
             <div>
               <label for="searchUserInput" class="form-label d-block">
                 <div class="d-flex justify-content-between">
-                  <span>
-                    Add Participants
-                  </span>
+                  <span>Add Participants</span>
                   <span class="badge text-bg-dark" id="participantsCount"></span>
                 </div>
               </label>
@@ -99,27 +114,31 @@
                 <span class="input-group-text">
                   <i class="bi bi-search"></i>
                 </span>
-                <input type="text" class="form-control" id="searchUserInput" placeholder="Search user by name or email">
+                <input type="text"
+                       class="form-control"
+                       id="searchUserInput"
+                       placeholder="Search user by name or email" />
               </div>
               <div id="searchResults"></div>
             </div>
             <div class="mt-2">
               <label class="form-label">
-                <span class="fw-bold">Participants</span></label>
+                <span class="fw-bold">Participants</span>
+              </label>
               <div id="addedUsers"></div>
             </div>
-            <input type="hidden" name="participants" id="usersHiddenInput">
+            <input type="hidden" name="participants" id="usersHiddenInput" />
             <div class="form-check mt-2">
-              <input class="form-check-input" type="checkbox" value="" id="addMyselfToParticipants">
-              <label class="form-check-label" for="addMyselfToParticipants">
-                Add me as a participant
-              </label>
+              <input class="form-check-input"
+                     type="checkbox"
+                     value=""
+                     id="addMyselfToParticipants" />
+              <label class="form-check-label" for="addMyselfToParticipants">Add me as a participant</label>
             </div>
           </div>
           <div class="modal-footer">
-
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <input type="submit" value="Add" class="btn btn-primary">
+            <input type="submit" value="Add" class="btn btn-primary" />
           </div>
         </form>
       </div>
@@ -257,57 +276,58 @@
         <div class="card">
           <div class="card-body">
             <div class="card-title">
-              <h5>{{session.name}}</h5>
+              <h5>{{ session.name }}</h5>
             </div>
             <p class="card-subtitle">
               <small class="text-muted">
                 <i class="bi bi-geo-alt"></i>
-                {{session.venue}}
+                {{ session.venue }}
               </small>
             </p>
             <div class="card-text mt-2">
               <div>
                 <small>
                   <i class="bi bi-calendar-date"></i>
-                  {{formatToDate(session.startsAt)}}
+                  {{ formatToDate(session.startsAt) }}
                 </small>
               </div>
               <div>
                 <small>
                   <i class="bi bi-clock"></i>
-                  {{formatToTime(session.startsAt)}},
-                  {{formatDistance(session.startsAt,session.endsAt)}}
+                  {{ formatToTime(session.startsAt) }},
+                  {{ formatDistance(session.startsAt,session.endsAt) }}
                 </small>
               </div>
               <div>
                 <small>
                   <i class="bi bi-people"></i>
-                  {{session.totalSlots-session.participants.length}}
+                  {{ session.totalSlots-session.participants.length }}
                   {{ "slot" if session.totalSlots-session.participants.length === 1 else "slots" }}
                   left
                 </small>
               </div>
               <div class="d-flex justify-content-between mt-3 gap-3">
                 {% if session.participating %}
-                  <form action="/sport/{{sport.id}}/session/{{session.id}}/leave" method="post">
+                  <form action="/sport/{{ sport.id }}/session/{{ session.id }}/leave"
+                        method="post">
                     <button class="btn btn-outline-danger">Leave</button>
                   </form>
                 {% else %}
                   {% if session.totalSlots > session.participants.length %}
-                    <form action="/sport/{{sport.id}}/session/{{session.id}}/join" method="post">
+                    <form action="/sport/{{ sport.id }}/session/{{ session.id }}/join"
+                          method="post">
                       <button class="btn btn-outline-success">Quick Join</button>
                     </form>
                   {% else %}
                     <button class="btn btn-outline-secondary" disabled="disabled">Slots Full</button>
                   {% endif %}
                 {% endif %}
-                <a href="/sport/{{sport.id}}/session/{{session.id}}" class="btn btn-primary">Explore</a>
+                <a href="/sport/{{ sport.id }}/session/{{ session.id }}"
+                   class="btn btn-primary">Explore</a>
               </div>
             </div>
           </div>
-          <div class="card-footer text-muted text-center">
-            {{formatDistanceFromNow(session.startsAt)}}
-          </div>
+          <div class="card-footer text-muted text-center">{{ formatDistanceFromNow(session.startsAt) }}</div>
         </div>
       </div>
     {% endfor %}

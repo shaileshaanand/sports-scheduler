@@ -1,12 +1,15 @@
 {% extends "layout.njk" %}
+
 {% block content %}
   <h3>New Sport</h3>
   <form action="/sport" method="post">
     <div>
       <label for="name">Sport Name</label>
-      <input type="text" name="name" id="name">
-      <input type="submit" value="Add Sport">
+      <input type="text" name="name" id="name" />
+      <input type="submit" value="Add Sport" />
     </div>
   </form>
+
   {% include "snippets/sports.njk" %}
+
 {% endblock %}

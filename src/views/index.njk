@@ -1,10 +1,14 @@
 {% extends "layout.njk" %}
+
 {% block content %}
   <div class="row">
     {% if user.role === "ADMIN" %}
       <div class="col-12 mb-3">
         <div class="text-end">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSportModal">
+          <button type="button"
+                  class="btn btn-primary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addSportModal">
             <i class="bi bi-plus-lg"></i>
             Add Sport
           </button>
@@ -14,13 +18,17 @@
             <div class="modal-content">
               <div class="modal-header">
                 Create Sport
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
               </div>
               <form action="/sport" method="post">
                 <div class="modal-body mb-2">
                   <div>
                     <label for="name" class="form-label">Sport Name</label>
-                    <input type="text" name="name" id="name" class="form-control">
+                    <input type="text" name="name" id="name" class="form-control" />
                   </div>
                 </div>
                 <div class="modal-footer">
@@ -32,25 +40,22 @@
           </div>
         </div>
       </div>
-
     {% endif %}
     {% for sport in sports %}
       <div class="col-3">
         <div class="card">
           <div class="card-body">
             <div class="card-title">
-              <h3>
-                {{sport.name}}
-              </h3>
+              <h3>{{ sport.name }}</h3>
             </div>
             <div class="card-subtitle">
               <small>
-                {{sport.sessions.length}}
+                {{ sport.sessions.length }}
                 Upcoming Sessions
               </small>
             </div>
             <div class="text-end">
-              <a href="/sport/{{sport.id}}" class="btn btn-primary">Explore</a>
+              <a href="/sport/{{ sport.id }}" class="btn btn-primary">Explore</a>
             </div>
           </div>
         </div>
