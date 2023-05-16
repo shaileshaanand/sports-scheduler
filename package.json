@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "prepare": "husky install",
     "dev": "nodemon -e js,njk src | bunyan -o json-2",
     "migrate": "prisma migrate dev",
     "prod": "node src",
@@ -14,6 +15,17 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ],
+    "*.njk": [
+      "djlint --reformat --warn"
+    ]
+  },
   "dependencies": {
     "@prisma/client": "^4.13.0",
     "bcrypt": "^5.1.0",
