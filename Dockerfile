@@ -6,7 +6,7 @@ RUN chown -R node:node /home/node/app
 
 WORKDIR /home/node/app
 
-COPY --chown=node:node package*.json .
+COPY --chown=node:node package*.json ./
 
 COPY --chown=node:node prisma ./prisma
 
@@ -21,7 +21,7 @@ RUN pip3 install --no-cache --upgrade pip setuptools
 
 RUN  npm ci && npx prisma generate
 
-COPY --chown=node:node . .
+COPY --chown=node:node ./ ./
 
 CMD ["npm","run","dev"]
 
@@ -34,7 +34,7 @@ ENV NODE_ENV=production
 
 RUN npm ci --omit=dev && npx prisma generate
 
-COPY --chown=node:node . .
+COPY --chown=node:node ./ ./
 
 CMD ["npm","run","prod"]
 
