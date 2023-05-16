@@ -8,8 +8,8 @@
     "dev": "nodemon -e js,njk src | bunyan -o json-2",
     "migrate": "prisma migrate dev",
     "prod": "node src",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint": "eslint . && djlint - --check",
+    "lint:fix": "eslint --fix . && djlint - --reformat"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +33,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "djlint": "^1.27.2",
     "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",

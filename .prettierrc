@@ -1,0 +1,10 @@
+{
+  "overrides": [
+    {
+      "files": ".djlintrc",
+      "options": {
+        "parser": "json"
+      }
+    }
+  ]
+}

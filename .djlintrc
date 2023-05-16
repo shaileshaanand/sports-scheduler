@@ -1,0 +1,10 @@
+{
+  "blank_line_after_tag": "load,extends,include",
+  "blank_line_before_tag": "load,extends,include",
+  "line_break_after_multiline_tag": "true",
+  "close_void_tags": true,
+  "indent": 2,
+  "profile": "nunjucks",
+  "extension": "njk",
+  "files": ["src/views"]
+}
