@@ -4,6 +4,7 @@ services:
     build: 
       dockerfile: Dockerfile
       context: .
+      target: development
     command: npm run dev
     volumes:
       - ./:/home/node/app
@@ -29,8 +30,6 @@ services:
   
   redis:
     image: redis:alpine
-    
-    
 
 volumes:
   data:
