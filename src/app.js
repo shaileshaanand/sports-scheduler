@@ -33,6 +33,22 @@ export const log = bunyan.createLogger({
   serializers: bunyan.stdSerializers,
 });
 
+const logLevels = {
+  10: "TRACE",
+  20: "DEBUG",
+  30: "INFO",
+  40: "WARNING",
+  50: "ERROR",
+  60: "CRITICAL",
+};
+
+bunyan.prototype._emit = (function (originalFunction) {
+  return function (rec, noemit) {
+    rec.severity = logLevels[rec.level];
+    return originalFunction.call(this, rec, noemit);
+  };
+})(bunyan.prototype._emit);
+
 redisClient.connect().catch((msg) => log.error(msg));
 
 app.use(bodyParser.urlencoded({ extended: false }));
