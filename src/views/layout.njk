@@ -32,6 +32,7 @@
         <ul class="navbar-nav">
           <li class="nav-item">{{ navLink('/', 'Sports', 'sports') }}</li>
           <li class="nav-item">{{ navLink('/user/sessions', 'My Sessions', 'mySessions') }}</li>
+          {% if user.role==="ADMIN" %}<li class="nav-item">{{ navLink('/admin/reports', 'Reports', 'reports') }}</li>{% endif %}
         </ul>
         <div class="">
           <span class="navbar-text">
