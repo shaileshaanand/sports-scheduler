@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 const adminRouter = Router();
@@ -10,7 +11,22 @@ adminRouter.get("/", async (req, res) => {
 });
 
 adminRouter.get("/reports", async (req, res) => {
-  req.log.info({ startDate: req.query.startDate, endDate: req.query.endDate });
+  z.object({
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+  })
+    .refine(
+      (data) => {
+        if (data.startDate && data.endDate) {
+          return new Date(data.startDate) < new Date(data.endDate);
+        }
+        return true;
+      },
+      {
+        message: "Start date must be before end date",
+      }
+    )
+    .parse(req.query);
   const where = {};
   if (req.query.startDate) {
     where.startsAt = {
