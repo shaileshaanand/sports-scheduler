@@ -3,8 +3,14 @@
   "blank_line_before_tag": "load,extends,include",
   "line_break_after_multiline_tag": "true",
   "close_void_tags": true,
+  "format_js": true,
+  "js": {
+    "indent_size": 2
+  },
   "indent": 2,
   "profile": "nunjucks",
   "extension": "njk",
-  "files": ["src/views"]
+  "files": [
+    "src/views"
+  ]
 }
