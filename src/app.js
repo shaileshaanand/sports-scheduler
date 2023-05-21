@@ -16,13 +16,13 @@ import passport from "passport";
 import LocalStrategy from "passport-local";
 import { createClient } from "redis";
 
+import "express-async-errors";
+
 import adminRouter from "./controllers/admin.js";
 import apiRouter from "./controllers/api.js";
 import sportRouter from "./controllers/sport.js";
 import userRouter from "./controllers/user.js";
 import errorHandler from "./middlewares/errorHandler.js";
-
-import "express-async-errors";
 
 const app = express();
 const prisma = new PrismaClient();
