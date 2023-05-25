@@ -1,20 +1,44 @@
-<form action="/user" method="post">
-  <div>
-    <label for="firstName">First Name</label>
-    <input type="text" name="firstName" id="firstName" required="required" />
+{% extends "baselayout.njk" %}
+
+{% block body %}
+  <div class="d-flex align-items-center justify-content-center flex-column min-vh-100 gap-3">
+    <form action="/user"
+          method="post"
+          class="rounded-4 border border-2 p-3 d-flex flex-column gap-3"
+          style="min-width:350px">
+      <div>
+        <label for="firstName" class="form-label">First Name</label>
+        <input type="text"
+               name="firstName"
+               id="firstName"
+               required="required"
+               class="form-control" />
+      </div>
+      <div>
+        <label for="lastName" class="form-label">Last Name</label>
+        <input type="text" name="lastName" id="lastName" class="form-control" />
+      </div>
+      <div>
+        <label for="email" class="form-label">Email</label>
+        <input type="email"
+               name="email"
+               id="email"
+               required="required"
+               class="form-control" />
+      </div>
+      <div>
+        <label for="password" class="form-label">Password</label>
+        <input type="password"
+               name="password"
+               id="password"
+               required="required"
+               class="form-control" />
+      </div>
+      <input type="submit" value="Register" class="btn btn-success" />
+    </form>
+    <p>
+      Already have an account?
+      <a href="/user/login">Login</a>
+    </p>
   </div>
-  <div>
-    <label for="lastName">Last Name</label>
-    <input type="text" name="lastName" id="lastName" />
-  </div>
-  <div>
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email" required="required" />
-  </div>
-  <div>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required="required" />
-  </div>
-  <input type="submit" value="Register" />
-</form>
-<a href="/user/login">Login</a>
+{% endblock %}

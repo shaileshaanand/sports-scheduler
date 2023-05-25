@@ -1,12 +1,24 @@
-<form action="/user/session" method="post">
-  <div>
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email" />
+{% extends "baselayout.njk" %}
+
+{% block body %}
+  <div class="d-flex align-items-center justify-content-center flex-column min-vh-100 gap-3">
+    <form action="/user/session"
+          method="post"
+          class="rounded-4 border border-2 p-3 d-flex flex-column gap-3"
+          style="min-width:350px">
+      <div>
+        <label for="email" class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" id="email" />
+      </div>
+      <div>
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" id="password" />
+      </div>
+      <input type="submit" value="Login" class="btn w-100 btn-success" />
+    </form>
+    <p>
+      Don't have an account?
+      <a href="/user/register">Register</a>
+    </p>
   </div>
-  <div>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" />
-  </div>
-  <input type="submit" value="Login" />
-</form>
-<a href="/user/register">Register</a>
+{% endblock %}
