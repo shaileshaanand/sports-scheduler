@@ -1,2 +1,12 @@
-<a href="/user/login">Login</a>
-<a href="/user/register">Register</a>
+{% extends "baselayout.njk" %}
+
+{% block body %}
+  <div class="d-flex align-items-center justify-content-center flex-column min-vh-100 gap-3">
+    <h1 class="-weight-bold">Welcome to Sports Scheduler</h1>
+    <h4>A one stop shop to find, host and manage Sports Events</h4>
+    <div>
+      <a href="/user/login" class="btn btn-lg btn-primary">Login</a>
+      <a href="/user/register" class="btn btn-lg btn-success ms-4">Register</a>
+    </div>
+  </div>
+{% endblock %}
