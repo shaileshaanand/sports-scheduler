@@ -1,6 +1,9 @@
 {% extends "baselayout.njk" %}
 
 {% block body %}
+
+  {% include "snippets/alerts.njk" %}
+
   <div class="d-flex align-items-center justify-content-center flex-column min-vh-100 gap-3">
     <form action="/user/session"
           method="post"
