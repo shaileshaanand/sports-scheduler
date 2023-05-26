@@ -51,7 +51,7 @@
             <div class="card-subtitle">
               <small>
                 {{ sport.sessions.length }}
-                Upcoming Sessions
+                Upcoming {{ pluralizeIfmultiple("Session", sport.sessions.length) }}
               </small>
             </div>
             <div class="text-end">
