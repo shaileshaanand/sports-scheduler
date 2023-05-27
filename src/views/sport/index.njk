@@ -41,6 +41,7 @@
                      id="name"
                      class="form-control" />
             </div>
+            <input type="hidden" name="_csrf" value={{ csrfToken }} />
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               <input type="submit" value="Save" class="btn btn-primary" />
@@ -62,6 +63,7 @@
           <div class="modal-footer">
             <form action="/sport/{{ sport.id }}?_method=DELETE" method="post">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <input type="hidden" name="_csrf" value={{ csrfToken }} />
               <input type="submit" value="Delete" class="btn btn-danger" />
             </form>
           </div>
@@ -138,6 +140,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <input type="hidden" name="_csrf" value={{ csrfToken }} />
             <input type="submit" value="Add" class="btn btn-primary" />
           </div>
         </form>
@@ -316,12 +319,14 @@
                 {% if session.participating %}
                   <form action="/sport/{{ sport.id }}/session/{{ session.id }}/leave"
                         method="post">
+                    <input type="hidden" name="_csrf" value={{ csrfToken }} />
                     <button class="btn btn-outline-danger">Leave</button>
                   </form>
                 {% else %}
                   {% if session.totalSlots > session.participants.length %}
                     <form action="/sport/{{ sport.id }}/session/{{ session.id }}/join"
                           method="post">
+                      <input type="hidden" name="_csrf" value={{ csrfToken }} />
                       <button class="btn btn-outline-success">Quick Join</button>
                     </form>
                   {% else %}

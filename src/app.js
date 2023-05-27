@@ -7,6 +7,8 @@ import bunyan from "bunyan";
 import { ensureLoggedIn } from "connect-ensure-login";
 import flash from "connect-flash";
 import RedisStore from "connect-redis";
+import cookieParser from "cookie-parser";
+import { doubleCsrf } from "csrf-csrf";
 import { format, formatDistanceStrict, formatDistanceToNow } from "date-fns";
 import express from "express";
 import session from "express-session";
@@ -107,6 +109,23 @@ passport.use(
   )
 );
 
+app.use(cookieParser());
+
+const { doubleCsrfProtection } = doubleCsrf({
+  getSecret: () => process.env.CSRF_SECRET,
+  ignoredMethods: ["GET", "HEAD", "OPTIONS"],
+  getTokenFromRequest: (req) => req.body._csrf,
+});
+
+app.use(doubleCsrfProtection);
+app.use((req, res, next) => {
+  env.addGlobal("csrfToken", req.csrfToken());
+  next();
+});
+app.use((req, res, next) => {
+  console.log({ cookies: req.cookies });
+  next();
+});
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });

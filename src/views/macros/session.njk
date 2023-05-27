@@ -43,12 +43,14 @@
             {% if session.participating %}
               <form action="/sport/{{ session.sportId }}/session/{{ session.id }}/leave"
                     method="post">
+                <input type="hidden" name="_csrf" value={{ csrfToken }} />
                 <button class="btn btn-outline-danger">Leave</button>
               </form>
             {% else %}
               {% if session.totalSlots > session.participants.length %}
                 <form action="/sport/{{ session.sportId }}/session/{{ session.id }}/join"
                       method="post">
+                  <input type="hidden" name="_csrf" value={{ csrfToken }} />
                   <button class="btn btn-outline-success">Quick Join</button>
                 </form>
               {% else %}

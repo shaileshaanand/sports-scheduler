@@ -8,6 +8,10 @@ const errorHandler = (err, req, res, next) => {
     );
     return res.redirect("back");
   }
+  if (err.code === "EBADCSRFTOKEN") {
+    req.flash("error", "Invalid CSRF Token");
+    return res.redirect("back");
+  }
   res
     .status(500)
     .send(`Internal Server Error\nError ID:${req.log.fields.req_id}`);

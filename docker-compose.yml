@@ -16,6 +16,7 @@ services:
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=development
       - SESSION_SECRET=lkaflkdrwsgjnrfdkgnfjknbdfgvjkjnb
+      - CSRF_SECRET=pWaqwwtTEOiXyxR2gLigvMdmymtOqt0b
     depends_on:
       - db
       
