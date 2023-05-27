@@ -16,6 +16,18 @@
         <label for="endDate" class="form-label">To</label>
         <input type="date" name="endDate" id="endDate" class="form-control" value={{ endDate }} />
       </div>
+      <div class="col">
+        <label for="sport" class="form-label">Sport</label>
+        <select name="sport" id="sport" class="form-select">
+          <option value="">Select..</option>
+          {% for sport in sports %}
+            <option value="{{ sport.id }}"
+                    {% if sport.id===currentSport.id %}selected{% endif %}>
+              {{ sport.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
       <div class="col-1 d-flex align-items-end">
         <button class="btn btn-primary w-100" type="submit">Apply</button>
       </div>
@@ -31,55 +43,83 @@
       <canvas id="participationChart"></canvas>
     </div>
   </div>
-  <script>
-    /* beautify preserve:start */
+  <div>
+    <h4>{{ currentSport.name }}</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Venue</th>
+          <th scope="col">Date</th>
+          <th scope="col">Time</th>
+          <th scope="col">Duration</th>
+          <th scope="col">Participants</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for session in currentSport.sessions %}
+          <tr>
+            <td>
+              <a href="/sport/{{ session.sportId }}/session/{{ session.id }}">{{ session.name }}</a>
+            </td>
+            <td>{{ session.venue }}</td>
+            <td>{{ formatToDate(session.startsAt) }}</td>
+            <td>{{ formatToTime(session.startsAt) }}</td>
+            <td>{{ formatDistance(session.startsAt,session.endsAt) }}</td>
+            <td>{{ session.participants.length }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </div>
+    <script>
+      /* beautify preserve:start */
     const sessionData = {{ sessionData | safe }};
     /* beautify preserve:end */
-    const ctx = document.getElementById('sessionsChart');
-    console.log(Chart, ctx);
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: sessionData.map(d => d.sport),
-        datasets: [{
-          label: 'Sessions',
-          data: sessionData.map(d => d.sessions),
-          backgroundColor: 'rgba(14,165,233,0.4)',
-        }]
-      },
-      options: {
-        plugins: {
-          legend: {
-            display: true,
-            position: 'bottom'
+      const ctx = document.getElementById('sessionsChart');
+      console.log(Chart, ctx);
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: sessionData.map(d => d.sport),
+          datasets: [{
+            label: 'Sessions',
+            data: sessionData.map(d => d.sessions),
+            backgroundColor: 'rgba(14,165,233,0.4)',
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom'
+            }
           }
         }
-      }
-    });
+      });
 
-    /* beautify preserve:start */
+      /* beautify preserve:start */
     const participationData = {{ participationData | safe }};
     /* beautify preserve:end */
-    const ctx2 = document.getElementById('participationChart');
+      const ctx2 = document.getElementById('participationChart');
 
-    new Chart(ctx2, {
-      type: 'bar',
-      data: {
-        labels: participationData.map(d => d.sport),
-        datasets: [{
-          label: 'Participation',
-          data: participationData.map(d => d.participation),
-          backgroundColor: 'rgba(255,29,72,0.4)',
-        }]
-      },
-      options: {
-        plugins: {
-          legend: {
-            display: true,
-            position: 'bottom'
+      new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: participationData.map(d => d.sport),
+          datasets: [{
+            label: 'Participation',
+            data: participationData.map(d => d.participation),
+            backgroundColor: 'rgba(255,29,72,0.4)',
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom'
+            }
           }
         }
-      }
-    });
-  </script>
-{% endblock %}
+      });
+    </script>
+  {% endblock %}

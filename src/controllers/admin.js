@@ -11,10 +11,17 @@ adminRouter.get("/", async (req, res) => {
 });
 
 adminRouter.get("/reports", async (req, res) => {
-  z.object({
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
-  })
+  const params = z
+    .object({
+      startDate: z.string().optional(),
+      endDate: z.string().optional(),
+      sport: z.preprocess((sportId) => {
+        if ([undefined, null].includes(sportId)) {
+          return sportId;
+        }
+        return Number(sportId);
+      }, z.number().optional()),
+    })
     .refine(
       (data) => {
         if (data.startDate && data.endDate) {
@@ -72,6 +79,8 @@ adminRouter.get("/reports", async (req, res) => {
     participationData: JSON.stringify(participationData),
     startDate: req.query.startDate,
     endDate: req.query.endDate,
+    sports,
+    currentSport: sports.find((sport) => sport.id === params.sport),
   });
 });
 
