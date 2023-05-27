@@ -27,9 +27,14 @@
         <div>
           <small>
             <i class="bi bi-people"></i>
-            {{ session.totalSlots-session.participants.length }}
-            {{ "slot" if session.totalSlots-session.participants.length === 1 else "slots" }}
-            left
+            {% if isPast(session.startsAt) %}
+              {{ session.participants.length }}
+              {{ pluralizeIfmultiple("participant",session.participants.length) }}
+            {% else %}
+              {{ session.totalSlots-session.participants.length }}
+              {{ pluralizeIfmultiple("slot",session.totalSlots-session.participants.length) }}
+              left
+            {% endif %}
           </small>
         </div>
         <div class="d-flex justify-content-between mt-3 gap-3">

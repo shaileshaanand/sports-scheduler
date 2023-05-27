@@ -65,13 +65,17 @@
       <p class="h5">Participants</p>
       <p class="text-muted">
         <i class="bi bi-person me-1"></i>
-        {{ session.totalSlots-session.participants.length }}
-        {{ pluralizeIfmultiple("slot",session.totalSlots-session.participants.length) }}
-        left (Total
+        {% if isPast(session.startsAt) %}
+          {{ session.participants.length }} {{ pluralizeIfmultiple("participant",session.participants.length) }}
+        {% else %}
+          {{ session.totalSlots-session.participants.length }}
+          {{ pluralizeIfmultiple("slot",session.totalSlots-session.participants.length) }}
+          left
+        {% endif %}
+        (Total
         {{ session.totalSlots }}
         {{ pluralizeIfmultiple("slot",session.totalSlots) }})
       </p>
-      5 slots left
     </div>
     {% if not joined %}
       <form action="/sport/{{ sport.id }}/session/{{ session.id }}/join"
