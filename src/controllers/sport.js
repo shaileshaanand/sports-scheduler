@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import { z } from "zod";
 
+import ensureAdmin from "../middlewares/ensureAdmin.js";
+
 const sportRouter = Router();
 
 const prisma = new PrismaClient();
@@ -39,13 +41,13 @@ sportRouter.get("/:id", async (req, res) => {
   res.render("sport/index.njk", { sport, user: req.user });
 });
 
-sportRouter.post("/", async (req, res) => {
+sportRouter.post("/", ensureAdmin, async (req, res) => {
   const data = sportParser.parse(req.body);
   await prisma.sport.create({ data });
   res.redirect("/");
 });
 
-sportRouter.put("/:id", async (req, res) => {
+sportRouter.put("/:id", ensureAdmin, async (req, res) => {
   const data = sportParser.parse(req.body);
   const id = Number(req.params.id);
   await prisma.sport.update({
@@ -55,7 +57,7 @@ sportRouter.put("/:id", async (req, res) => {
   res.redirect(`/sport/${id}`);
 });
 
-sportRouter.delete("/:id", async (req, res) => {
+sportRouter.delete("/:id", ensureAdmin, async (req, res) => {
   const id = Number(req.params.id);
   await prisma.sport.delete({
     where: { id },

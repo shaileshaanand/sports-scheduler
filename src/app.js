@@ -22,6 +22,7 @@ import adminRouter from "./controllers/admin.js";
 import apiRouter from "./controllers/api.js";
 import sportRouter from "./controllers/sport.js";
 import userRouter from "./controllers/user.js";
+import ensureAdmin from "./middlewares/ensureAdmin.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
@@ -192,7 +193,7 @@ app.get("/", async (req, res) => {
 });
 
 app.use("/user", userRouter);
-app.use("/admin", ensureLoggedIn("/user/login"), adminRouter);
+app.use("/admin", ensureLoggedIn("/user/login"), ensureAdmin, adminRouter);
 app.use("/sport", ensureLoggedIn("/user/login"), sportRouter);
 app.use("/api", ensureLoggedIn("/user/login"), apiRouter);
 
