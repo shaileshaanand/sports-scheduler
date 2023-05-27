@@ -6,6 +6,7 @@ try {
     SESSION_SECRET: z.string().nonempty(),
     REDIS_URL: z.string().nonempty(),
     DATABASE_URL: z.string().nonempty(),
+    CSRF_SECRET: z.string().nonempty(),
   }).parse(process.env);
 } catch (e) {
   if (e instanceof z.ZodError) {
