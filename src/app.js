@@ -122,10 +122,6 @@ app.use((req, res, next) => {
   env.addGlobal("csrfToken", req.csrfToken());
   next();
 });
-app.use((req, res, next) => {
-  console.log({ cookies: req.cookies });
-  next();
-});
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
