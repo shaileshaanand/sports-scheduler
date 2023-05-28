@@ -10,6 +10,10 @@ const errorHandler = (err, req, res, next) => {
   }
   if (err.code === "EBADCSRFTOKEN") {
     req.flash("error", "Invalid CSRF Token");
+    return res.status(403).render("403.njk");
+  }
+  if (err.code === "P2002") {
+    req.flash("error", "Email already registered");
     return res.redirect("back");
   }
   res
