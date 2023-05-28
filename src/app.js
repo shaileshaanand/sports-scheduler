@@ -52,6 +52,10 @@ bunyan.prototype._emit = (function (originalFunction) {
   };
 })(bunyan.prototype._emit);
 
+if (process.env.NODE_ENV === "test") {
+  log.level(bunyan.FATAL + 1);
+}
+
 redisClient.connect().catch((msg) => log.error(msg));
 
 app.use(bodyParser.urlencoded({ extended: false }));

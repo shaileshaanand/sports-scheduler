@@ -10,7 +10,9 @@
     "migrate": "prisma migrate dev",
     "prod": "node src",
     "lint": "eslint . && djlint - --check",
-    "lint:fix": "eslint --fix . && djlint - --reformat"
+    "lint:fix": "eslint --fix . && djlint - --reformat",
+    "test": "./run-tests.sh run",
+    "test:watch": "./run-tests.sh"
   },
   "keywords": [],
   "author": "",
@@ -48,6 +50,8 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.1",
+    "cheerio": "^1.0.0-rc.12",
     "djlint": "^1.29.0",
     "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.8.0",
@@ -56,6 +60,8 @@
     "lint-staged": "^13.2.2",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
-    "prisma": "^4.14.1"
+    "prisma": "^4.14.1",
+    "supertest": "^6.3.3",
+    "vitest": "^0.31.1"
   }
 }

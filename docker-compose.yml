@@ -13,12 +13,15 @@ services:
       - 3000:3000
     environment:
       - DATABASE_URL=postgresql://postgres:changeme123@db:5432/news_db
+      - TEST_DATABASE_URL=postgresql://postgres:changeme123@db_test:5432/news_test_db
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=development
       - SESSION_SECRET=lkaflkdrwsgjnrfdkgnfjknbdfgvjkjnb
       - CSRF_SECRET=pWaqwwtTEOiXyxR2gLigvMdmymtOqt0b
     depends_on:
       - db
+      - redis
+      - db_test
       
   db:
     image: postgres:alpine
@@ -27,6 +30,13 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=news_db
+      - POSTGRES_PASSWORD=changeme123
+
+  db_test:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=news_test_db
       - POSTGRES_PASSWORD=changeme123
   
   redis:
