@@ -29,8 +29,8 @@ userRouter.post("/", async (req, res) => {
     if (err) {
       throw err;
     }
+    res.redirect("/");
   });
-  res.redirect("/");
 });
 
 userRouter.post(
