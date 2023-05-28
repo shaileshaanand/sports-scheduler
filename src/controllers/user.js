@@ -3,7 +3,7 @@ import { Router } from "express";
 import passport from "passport";
 import { z } from "zod";
 
-import { hashPassword } from "../lib/encryptPassword";
+import { hashPassword } from "../lib/encryptPassword.js";
 
 const prisma = new PrismaClient();
 
