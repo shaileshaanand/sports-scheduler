@@ -1,14 +1,13 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 import { Router } from "express";
 import passport from "passport";
 import { z } from "zod";
 
+import { hashPassword } from "../lib/encryptPassword";
+
 const prisma = new PrismaClient();
 
 const userRouter = Router();
-
-const SALT_ROUNDS = 10;
 
 userRouter.post("/", async (req, res) => {
   const data = z
@@ -22,7 +21,7 @@ userRouter.post("/", async (req, res) => {
   const user = await prisma.user.create({
     data: {
       ...data,
-      password: await bcrypt.hash(data.password, SALT_ROUNDS),
+      password: await hashPassword(data.password),
     },
   });
   req.login(user, (err) => {

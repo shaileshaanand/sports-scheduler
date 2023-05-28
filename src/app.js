@@ -1,7 +1,6 @@
 import crypto from "crypto";
 
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 import bodyParser from "body-parser";
 import bunyan from "bunyan";
 import { ensureLoggedIn } from "connect-ensure-login";
@@ -24,6 +23,7 @@ import adminRouter from "./controllers/admin.js";
 import apiRouter from "./controllers/api.js";
 import sportRouter from "./controllers/sport.js";
 import userRouter from "./controllers/user.js";
+import { verifyPassword } from "./lib/encryptPassword.js";
 import ensureAdmin from "./middlewares/ensureAdmin.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
@@ -100,7 +100,7 @@ passport.use(
       if (!user) {
         return done(null, false, { message: "No user found" });
       }
-      const passwordMatch = await bcrypt.compare(password, user.password);
+      const passwordMatch = await verifyPassword(password, user.password);
       if (!passwordMatch) {
         return done(null, false, { message: "Incorrect password" });
       }
