@@ -113,6 +113,7 @@ app.use(cookieParser());
 
 const { doubleCsrfProtection } = doubleCsrf({
   getSecret: () => process.env.CSRF_SECRET,
+  cookieName: "csrfToken",
   ignoredMethods: ["GET", "HEAD", "OPTIONS"],
   getTokenFromRequest: (req) => req.body._csrf,
 });
