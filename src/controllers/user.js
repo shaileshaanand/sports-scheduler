@@ -1,11 +1,9 @@
-import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import passport from "passport";
 import { z } from "zod";
 
 import { hashPassword } from "../lib/encryptPassword.js";
-
-const prisma = new PrismaClient();
+import prisma from "../lib/prisma.js";
 
 const userRouter = Router();
 

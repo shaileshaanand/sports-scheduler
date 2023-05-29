@@ -1,6 +1,5 @@
 import crypto from "crypto";
 
-import { PrismaClient } from "@prisma/client";
 import bodyParser from "body-parser";
 import bunyan from "bunyan";
 import { ensureLoggedIn } from "connect-ensure-login";
@@ -24,11 +23,11 @@ import apiRouter from "./controllers/api.js";
 import sportRouter from "./controllers/sport.js";
 import userRouter from "./controllers/user.js";
 import { verifyPassword } from "./lib/encryptPassword.js";
+import prisma from "./lib/prisma.js";
 import ensureAdmin from "./middlewares/ensureAdmin.js";
 import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
-const prisma = new PrismaClient();
 const redisClient = createClient({ url: process.env.REDIS_URL });
 
 export const log = bunyan.createLogger({

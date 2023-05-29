@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import { z } from "zod";
 
+import prisma from "../lib/prisma.js";
 import ensureAdmin from "../middlewares/ensureAdmin.js";
 
 const sportRouter = Router();
-
-const prisma = new PrismaClient();
 
 const sportParser = z.object({
   name: z.string().min(1).max(255),

@@ -1,9 +1,7 @@
 import { faker } from "@faker-js/faker";
-import { PrismaClient } from "@prisma/client";
 
 import { hashPassword } from "../src/lib/encryptPassword";
-
-const prisma = new PrismaClient();
+import prisma from "../src/lib/prisma.js";
 
 export const userFactory = async ({
   email = null,
