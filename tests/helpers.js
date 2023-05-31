@@ -22,6 +22,21 @@ export const setupCsrf = async (client) => {
   return [_csrf, csrfCookie];
 };
 
+export const getLoginCookie = async (client, user) => {
+  const [_csrf, csrfCookie] = await setupCsrf(client);
+  const sessionResponse = await client
+    .post("/user/session")
+    .set("Cookie", csrfCookie)
+    .send(
+      formPayload({
+        _csrf,
+        email: user.email,
+        password: user.rawPassword,
+      })
+    );
+  return extractLoginCookie(sessionResponse);
+};
+
 export const extractLoginCookie = (response) => {
   return extractCookie(response, "connect.sid");
 };

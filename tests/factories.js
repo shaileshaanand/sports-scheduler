@@ -8,22 +8,26 @@ export const userFactory = async ({
   firstName = null,
   lastName = null,
   password = null,
+  role = "USER",
 } = {}) => {
+  const rawPassword = password || faker.internet.password();
   const user = await prisma.user.create({
     data: {
       email: email || faker.internet.email(),
       firstName: firstName || faker.person.firstName(),
       lastName: lastName || faker.person.lastName(),
-      password: await hashPassword(password || faker.internet.password()),
+      password: await hashPassword(rawPassword),
+      role,
     },
   });
+  user.rawPassword = rawPassword;
   return user;
 };
 
 export const sportFactory = async ({ name = null } = {}) => {
   const sport = await prisma.sport.create({
     data: {
-      name: name || faker.name.firstName(),
+      name: name || faker.lorem.words(2),
     },
   });
   return sport;
