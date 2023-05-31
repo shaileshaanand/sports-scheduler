@@ -2,3 +2,4 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npx lint-staged
+docker compose run -T --rm app sh -c "npm run test"
