@@ -37,6 +37,10 @@ export const getLoginCookie = async (client, user) => {
   return extractLoginCookie(sessionResponse);
 };
 
+export const formatDate = (date) => {
+  return date.toISOString().substring(0, 16);
+};
+
 export const extractLoginCookie = (response) => {
   return extractCookie(response, "connect.sid");
 };

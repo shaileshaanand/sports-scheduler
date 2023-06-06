@@ -32,3 +32,54 @@ export const sportFactory = async ({ name = null } = {}) => {
   });
   return sport;
 };
+
+export const sportSessionFactory = async ({
+  owner = null,
+  sport = null,
+  name = null,
+  venue = null,
+  startsAt = null,
+  endsAt = null,
+  totalSlots = null,
+  cancelled = null,
+  cancellationReason = null,
+  participants = [],
+} = {}) => {
+  const startsAtTime = startsAt || faker.date.future();
+  const endsAtTime =
+    endsAt ||
+    faker.date.future({
+      refDate: startsAtTime,
+    });
+  const sportSession = await prisma.sportSession.create({
+    data: {
+      name: name || faker.lorem.words(3),
+      venue: venue || faker.lorem.words(2),
+      startsAt: startsAtTime,
+      endsAt: endsAtTime,
+      totalSlots: totalSlots || faker.number.int({ min: 10, max: 1000 }),
+      cancelled: cancelled || false,
+      cancellationReason: cancellationReason || null,
+      owner: {
+        connect: {
+          id: owner ? owner.id : (await userFactory()).id,
+        },
+      },
+      sport: {
+        connect: {
+          id: sport ? sport.id : (await sportFactory()).id,
+        },
+      },
+      participants: {
+        connect: participants.map((participant) => ({
+          id: participant.id,
+        })),
+      },
+    },
+    include: {
+      owner: true,
+      sport: true,
+    },
+  });
+  return sportSession;
+};
