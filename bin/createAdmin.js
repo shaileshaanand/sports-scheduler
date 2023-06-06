@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-import { hashPassword } from "../src/lib/encryptPassword";
+import { hashPassword } from "../src/lib/encryptPassword.js";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ const user = await prisma.user.create({
   data: {
     firstName,
     email,
-    password: hashPassword(password),
+    password: await hashPassword(password),
     role: "ADMIN",
   },
 });
