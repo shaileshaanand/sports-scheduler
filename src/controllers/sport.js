@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 
+import CustomError from "../lib/CustomError.js";
 import prisma from "../lib/prisma.js";
 import ensureAdmin from "../middlewares/ensureAdmin.js";
 
@@ -93,7 +94,7 @@ sportRouter.post("/:id/session", async (req, res) => {
   const userIds = JSON.parse(data.participants);
 
   if (userIds.length > data.totalSlots) {
-    throw new Error("Too many participants");
+    throw new CustomError("Too many participants", "back");
   }
 
   await prisma.sportSession.create({
@@ -130,7 +131,6 @@ sportRouter.get("/:id/session/:sessionId", async (req, res) => {
   const joined = session.participants.some((x) => x.id === req.user.id);
   res.render("sport/session.njk", { session, sport, user: req.user, joined });
 });
-
 sportRouter.post("/:id/session/:sessionId/join", async (req, res) => {
   const id = Number(req.params.sessionId);
   const session = await prisma.sportSession.findUnique({
@@ -140,20 +140,21 @@ sportRouter.post("/:id/session/:sessionId/join", async (req, res) => {
     },
   });
   if (session.participants.length >= session.totalSlots) {
-    throw new Error("Session is full");
+    throw new CustomError("Session is full", "back");
   }
   if (session.participants.some((x) => x.id === req.user.id)) {
-    throw new Error("Already joined");
+    throw new CustomError("Already joined", "back");
   }
   if (session.endsAt < new Date()) {
-    throw new Error("Session has already ended");
+    throw new CustomError("Session has already ended", "back");
   }
   if (session.startsAt < new Date()) {
-    throw new Error("Session has already started");
+    throw new CustomError("Session has already started", "back");
   }
   if (session.cancelled) {
-    throw new Error(
-      `Session has been cancelled due to ${session.cancellationReason}`
+    throw new CustomError(
+      `Session has been cancelled due to ${session.cancellationReason}`,
+      "back"
     );
   }
 
@@ -177,16 +178,16 @@ sportRouter.post("/:id/session/:sessionId/leave", async (req, res) => {
     },
   });
   if (!session.participants.some((x) => x.id === req.user.id)) {
-    throw new Error("Not joined");
+    throw new CustomError("Not joined", "back");
   }
   if (session.endsAt < new Date()) {
-    throw new Error("Session has already ended");
+    throw new CustomError("Session has already ended", "back");
   }
   if (session.startsAt < new Date()) {
-    throw new Error("Session has already started");
+    throw new CustomError("Session has already started", "back");
   }
   if (session.cancelled) {
-    throw new Error("Session has been cancelled");
+    throw new CustomError("Session has been cancelled", "back");
   }
   await prisma.sportSession.update({
     where: { id },
@@ -201,17 +202,17 @@ sportRouter.post("/:id/session/:sessionId/leave", async (req, res) => {
 
 sportRouter.post("/:id/session/:sessionId/cancel", async (req, res) => {
   const id = Number(req.params.sessionId);
-  const session = await prisma.sportSession.findFirstOrThrow({
+  const session = await prisma.sportSession.findFirst({
     where: { id, ownerId: req.user.id },
   });
   if (!session) {
-    throw new Error("Not owner");
+    throw new CustomError("Not owner", "back");
   }
   if (session.endsAt < new Date()) {
-    throw new Error("Session has already ended");
+    throw new CustomError("Session has already ended", "back");
   }
   if (session.startsAt < new Date()) {
-    throw new Error("Session has already started");
+    throw new CustomError("Session has already started", "back");
   }
   const cancellationReason = z
     .string()
