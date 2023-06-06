@@ -271,4 +271,24 @@ describe("Sport admin tests", () => {
     const deletedSport = await prisma.sport.findFirst();
     expect(deletedSport).not.toBeNull();
   });
+
+  it("should not show sport details if not logged in", async () => {
+    const sport = await sportFactory();
+
+    const response = await client.get(`/sport/${sport.id}`);
+
+    expect(response.status).toBe(302);
+    expect(response.headers.location).toBe("/user/login");
+  });
+
+  it("should show sport details if logged in as user", async (ctx) => {
+    const sport = await sportFactory();
+
+    const response = await client
+      .get(`/sport/${sport.id}`)
+      .set("Cookie", ctx.loginCookie);
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain(sport.name);
+  });
 });
