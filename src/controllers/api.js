@@ -30,7 +30,14 @@ apiRouter.get("/user", async (req, res) => {
       ],
     },
   });
-  res.json(users.filter((user) => user.id !== req.user.id));
+  res.json(
+    users
+      .map((user) => {
+        delete user.password;
+        return user;
+      })
+      .filter((user) => user.id !== req.user.id)
+  );
 });
 
 export default apiRouter;
