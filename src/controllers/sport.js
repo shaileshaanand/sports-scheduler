@@ -225,7 +225,7 @@ sportRouter.post("/:id/session/:sessionId/join", async (req, res) => {
 
   if (everlapError) {
     throw new CustomError(
-      `The session you are trying to create clashes with ${everlapError}`,
+      `The session you are trying to join clashes with already joined ${everlapError}`,
       "back"
     );
   }
