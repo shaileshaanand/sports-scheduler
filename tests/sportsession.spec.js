@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
+import { add } from "date-fns";
 import supertest from "supertest";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -208,6 +209,152 @@ describe("SportSession", () => {
     expect(createdSportSession.cancellationReason).toBeNull();
   });
 
+  it("should not create a session if participant's session overlaps", async (ctx) => {
+    const user = await userFactory();
+    const startsAt = faker.date.future();
+    const endsAt = add(startsAt, { hours: 1 });
+    await sportSessionFactory({
+      participants: [user],
+      startsAt: startsAt,
+      endsAt,
+    });
+    const startsAtDate = add(startsAt, { minutes: 30 });
+    const startsAtForPayload = formatDate(startsAtDate);
+    const payload = {
+      name: faker.lorem.words(3),
+      venue: faker.lorem.words(2),
+      startsAt: startsAtForPayload,
+      endsAt: formatDate(
+        add(startsAtDate, {
+          hours: 1,
+        })
+      ),
+      totalSlots: faker.number.int({ min: 10, max: 1000 }),
+      participants: JSON.stringify([user.id]),
+    };
+    const sport = await sportFactory();
+
+    const response = await client
+      .post(`/sport/${sport.id}/session`)
+      .set("Cookie", [csrfCookie, ctx.loginCookie])
+      .send(formPayload({ _csrf, ...payload }));
+
+    expect(response.status).toBe(302);
+    const createdSportSession = await prisma.sportSession.findMany();
+    expect(createdSportSession.length).toBe(1);
+  });
+
+  it("should not create a session if owner's session overlaps", async (ctx) => {
+    const startsAt = faker.date.future();
+    const endsAt = add(startsAt, { hours: 1 });
+    await sportSessionFactory({
+      participants: [ctx.user],
+      startsAt,
+      endsAt,
+    });
+    const startsAtDate = add(startsAt, { minutes: 30 });
+    const startsAtForPayload = formatDate(startsAtDate);
+    const payload = {
+      name: faker.lorem.words(3),
+      venue: faker.lorem.words(2),
+      startsAt: startsAtForPayload,
+      endsAt: formatDate(
+        add(startsAtDate, {
+          hours: 1,
+        })
+      ),
+      totalSlots: faker.number.int({ min: 10, max: 1000 }),
+      participants: JSON.stringify([ctx.user.id]),
+    };
+    const sport = await sportFactory();
+
+    const response = await client
+      .post(`/sport/${sport.id}/session`)
+      .set("Cookie", [csrfCookie, ctx.loginCookie])
+      .send(formPayload({ _csrf, ...payload }));
+
+    expect(response.status).toBe(302);
+    const createdSportSession = await prisma.sportSession.findMany({
+      include: {
+        participants: true,
+      },
+    });
+    expect(createdSportSession.length).toBe(1);
+  });
+
+  it("should create a session if participant's session does not overlap", async (ctx) => {
+    const user = await userFactory();
+    const startsAt = faker.date.future();
+    const endsAt = add(startsAt, { hours: 1 });
+    await sportSessionFactory({
+      participants: [user],
+      startsAt: startsAt,
+      endsAt,
+    });
+    const startsAtDate = add(startsAt, { hours: 2 });
+    const startsAtForPayload = formatDate(startsAtDate);
+    const payload = {
+      name: faker.lorem.words(3),
+      venue: faker.lorem.words(2),
+      startsAt: startsAtForPayload,
+      endsAt: formatDate(
+        add(startsAtDate, {
+          hours: 1,
+        })
+      ),
+      totalSlots: faker.number.int({ min: 10, max: 1000 }),
+      participants: JSON.stringify([user.id]),
+    };
+    const sport = await sportFactory();
+
+    const response = await client
+      .post(`/sport/${sport.id}/session`)
+      .set("Cookie", [csrfCookie, ctx.loginCookie])
+      .send(formPayload({ _csrf, ...payload }));
+
+    expect(response.status).toBe(302);
+    const createdSportSession = await prisma.sportSession.findMany();
+    expect(createdSportSession.length).toBe(2);
+  });
+
+  it("should create a session if owner's session does not overlap", async (ctx) => {
+    const startsAt = faker.date.future();
+    const endsAt = add(startsAt, { hours: 1 });
+    await sportSessionFactory({
+      participants: [ctx.user],
+      startsAt,
+      endsAt,
+    });
+    const startsAtDate = add(startsAt, { hours: 3 });
+    const startsAtForPayload = formatDate(startsAtDate);
+    const payload = {
+      name: faker.lorem.words(3),
+      venue: faker.lorem.words(2),
+      startsAt: startsAtForPayload,
+      endsAt: formatDate(
+        add(startsAtDate, {
+          hours: 1,
+        })
+      ),
+      totalSlots: faker.number.int({ min: 10, max: 1000 }),
+      participants: JSON.stringify([ctx.user.id]),
+    };
+    const sport = await sportFactory();
+
+    const response = await client
+      .post(`/sport/${sport.id}/session`)
+      .set("Cookie", [csrfCookie, ctx.loginCookie])
+      .send(formPayload({ _csrf, ...payload }));
+
+    expect(response.status).toBe(302);
+    const createdSportSession = await prisma.sportSession.findMany({
+      include: {
+        participants: true,
+      },
+    });
+    expect(createdSportSession.length).toBe(2);
+  });
+
   it("should create a session with participants", async (ctx) => {
     const startsAtDate = faker.date.future();
     const startsAt = formatDate(startsAtDate);
@@ -380,6 +527,66 @@ describe("SportSession", () => {
       },
     });
     expect(updatedSession.participants.length).toBe(0);
+  });
+  it("should not be able to join a session if session overlaps", async (ctx) => {
+    const startsAt = faker.date.future();
+    const endsAt = add(startsAt, { hours: 1 });
+    await sportSessionFactory({
+      participants: [ctx.user],
+      startsAt,
+      endsAt,
+    });
+    const session = await sportSessionFactory({
+      startsAt: add(startsAt, { minutes: 30 }),
+      endsAt: add(startsAt, { minutes: 90 }),
+    });
+
+    const response = await client
+      .post(`/sport/${session.sportId}/session/${session.id}/join`)
+      .set("Cookie", [csrfCookie, ctx.loginCookie])
+      .send(formPayload({ _csrf }));
+
+    expect(response.status).toBe(302);
+    const updatedSession = await prisma.sportSession.findUnique({
+      where: {
+        id: session.id,
+      },
+      include: {
+        participants: true,
+      },
+    });
+    expect(updatedSession.participants.length).toBe(0);
+  });
+
+  it("should be able to join a session if session does not overlap", async (ctx) => {
+    const startsAt = faker.date.future();
+    const endsAt = add(startsAt, { hours: 1 });
+    await sportSessionFactory({
+      participants: [ctx.user],
+      startsAt,
+      endsAt,
+    });
+    const session = await sportSessionFactory({
+      startsAt: add(startsAt, { hours: 3 }),
+      endsAt: add(startsAt, { hours: 4 }),
+    });
+
+    const response = await client
+      .post(`/sport/${session.sportId}/session/${session.id}/join`)
+      .set("Cookie", [csrfCookie, ctx.loginCookie])
+      .send(formPayload({ _csrf }));
+
+    expect(response.status).toBe(302);
+    const updatedSession = await prisma.sportSession.findUnique({
+      where: {
+        id: session.id,
+      },
+      include: {
+        participants: true,
+      },
+    });
+    expect(updatedSession.participants.length).toBe(1);
+    expect(updatedSession.participants[0].id).toBe(ctx.user.id);
   });
 
   it("should not be able to join a session without csrf", async () => {

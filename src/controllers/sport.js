@@ -1,6 +1,9 @@
+import { format } from "date-fns";
+import escapeHtml from "escape-html";
 import { Router } from "express";
 import { z } from "zod";
 
+import checkEventOverlap from "../lib/checkEventOverlap.js";
 import CustomError from "../lib/CustomError.js";
 import prisma from "../lib/prisma.js";
 import ensureAdmin from "../middlewares/ensureAdmin.js";
@@ -10,6 +13,38 @@ const sportRouter = Router();
 const sportParser = z.object({
   name: z.string().min(1).max(255),
 });
+
+const ensureNoOverlap = async (user, session) => {
+  const userFutureSessions = await prisma.sportSession.findMany({
+    where: {
+      participants: {
+        some: {
+          id: user.id,
+        },
+      },
+      startsAt: {
+        gt: new Date(),
+      },
+    },
+  });
+
+  const overlap = checkEventOverlap([...userFutureSessions, session]);
+
+  if (overlap) {
+    const overlappingSession = overlap.filter(
+      (x) => x.id && x.id != session.id
+    )[0];
+    return `<a href="/sport/${overlappingSession.sportId}/session/${
+      overlappingSession.id
+    }" class="alert-link">${escapeHtml(
+      overlappingSession.name
+    )}</a> at ${format(overlappingSession.startsAt, "h:mm a")} on ${format(
+      overlappingSession.startsAt,
+      "do MMM yyyy"
+    )}`;
+  }
+  return false;
+};
 
 sportRouter.get("/:id", async (req, res) => {
   const id = Number(req.params.id);
@@ -97,6 +132,34 @@ sportRouter.post("/:id/session", async (req, res) => {
     throw new CustomError("Too many participants", "back");
   }
 
+  if (data.participants.includes(req.user.id)) {
+    const everlapError = await ensureNoOverlap(req.user, data);
+
+    if (everlapError) {
+      throw new CustomError(
+        `This session clashes with ${everlapError} which you have already joined.`,
+        "back"
+      );
+    }
+  }
+
+  const overlaps = await Promise.all(
+    userIds.map(async (participantId) => {
+      const everlapError = await ensureNoOverlap({ id: participantId }, data);
+      if (everlapError) {
+        const participant = await prisma.user.findUnique({
+          where: { id: participantId },
+        });
+        return `User ${participant.firstName} has joined ${everlapError} which clashes with the session you are trying to create.`;
+      }
+      return false;
+    })
+  );
+
+  if (overlaps.some((x) => x)) {
+    throw new CustomError(overlaps.filter((x) => x).join("<br>"), "back");
+  }
+
   await prisma.sportSession.create({
     data: {
       ...data,
@@ -154,6 +217,15 @@ sportRouter.post("/:id/session/:sessionId/join", async (req, res) => {
   if (session.cancelled) {
     throw new CustomError(
       `Session has been cancelled due to ${session.cancellationReason}`,
+      "back"
+    );
+  }
+
+  const everlapError = await ensureNoOverlap(req.user, session);
+
+  if (everlapError) {
+    throw new CustomError(
+      `The session you are trying to create clashes with ${everlapError}`,
       "back"
     );
   }
