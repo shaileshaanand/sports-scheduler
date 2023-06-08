@@ -26,6 +26,7 @@ import { verifyPassword } from "./lib/encryptPassword.js";
 import prisma from "./lib/prisma.js";
 import ensureAdmin from "./middlewares/ensureAdmin.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import removeSetCookie from "./middlewares/removeSetCookie.js";
 
 const app = express();
 const redisClient = createClient({ url: process.env.REDIS_URL });
@@ -214,7 +215,7 @@ app.get("/", async (req, res) => {
 app.use("/user", userRouter);
 app.use("/admin", ensureLoggedIn("/user/login"), ensureAdmin, adminRouter);
 app.use("/sport", ensureLoggedIn("/user/login"), sportRouter);
-app.use("/api", ensureLoggedIn("/user/login"), apiRouter);
+app.use("/api", ensureLoggedIn("/user/login"), removeSetCookie, apiRouter);
 
 app.use(errorHandler);
 export default app;
