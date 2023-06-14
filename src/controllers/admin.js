@@ -34,7 +34,11 @@ adminRouter.get("/reports", async (req, res) => {
       }
     )
     .parse(req.query);
-  const where = {};
+  const where = {
+    startsAt: {
+      lte: new Date(),
+    },
+  };
   if (req.query.startDate) {
     where.startsAt = {
       gte: new Date(req.query.startDate),
