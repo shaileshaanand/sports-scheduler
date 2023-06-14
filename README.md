@@ -6,13 +6,13 @@ Admins can also see reports of the popularity of each sport in a given time fram
 
 ## Demo deployment
 ### Link
-(https://sports-scheduler-wdayyt3ioq-uc.a.run.app)[https://sports-scheduler-wdayyt3ioq-uc.a.run.app]
+[https://sports-scheduler-wdayyt3ioq-uc.a.run.app](https://sports-scheduler-wdayyt3ioq-uc.a.run.app)
 ### Credentials
 Email: `admin@example.com`
 Password: `adminadmin`
 
-## Video Demo
-https://drive.google.com/file/d/1kIKCHyMRTRDGhiR9r7jLYnPZxH7-TQhw/view?usp=sharing
+[Demo Video](https://drive.google.com/file/d/1kIKCHyMRTRDGhiR9r7jLYnPZxH7-TQhw/view?usp=sharing)
+
 ## Running the app
 
 Start the app
